@@ -9,4 +9,5 @@ function removeColonsFromRSS($feed) {
   $pattern = '/(<\/\w+):(\w+>)/i';
   $replacement = '$1$2';
   $feed = preg_replace($pattern, $replacement, $feed);
-  return $feed; }
+  return $feed;
+}
