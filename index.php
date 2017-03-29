@@ -49,6 +49,7 @@ $("#submitXmlUrlForm").on("submit", function(event){
 
   event.preventDefault();
   var xmlUrl = $("#xmlUrl").val();
+  $("#parserResult").html("");
   getFeed(xmlUrl);
 
 });

@@ -39,9 +39,9 @@ for (var i = 0, element; element = elements[i++];){
 //add the event listener to the button
 document.getElementById("submitBuildString").addEventListener("click", buildString);
 
-////////////////////////////
+////////////////////////////////
 /* control data mini-previews */
-///////////////////////////
+///////////////////////////////
 
 function toggleMiniPreview(){
 
@@ -73,4 +73,38 @@ for(var i = 0, element; element = elements[i++];){
 
   }
 
+}
+
+  ////////////////////////////////
+  /* control data preview rows */
+  ///////////////////////////////
+
+  function togglePreviewRow(){
+
+    var id = this.id.split("-");
+    var key = id[1];
+    var el = document.getElementById("pRow-" + key);
+
+    if (this.checked == true){
+
+      el.style.display = 'none';
+
+    }else{
+
+      el.style.display = 'table-row';
+
+    }
+
+  }
+
+  var pElements = document.getElementById("previewData");
+  var items = pElements.getElementsByTagName('input');
+
+  for(var i = 0, element; element = items[i++];){
+
+    if(element.type == "checkbox"){
+
+      element.addEventListener("click", togglePreviewRow);
+
+    }
 }

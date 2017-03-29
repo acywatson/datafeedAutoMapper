@@ -2,13 +2,14 @@
 //TO DO
 //1) Handle variants - need to ask allie about this
 //DONE 2) Add more preview data (3-5 items worth - table?)
-//3) Create way to pull xml in from merchant URL
+//DONE 3) Create way to pull xml in from merchant URL
 //4) (REACH) add fuzzy search that tries to auto-select the correct value :-)
 //DONE 5) Pull out JS into separate file and include.
 //DONE 6)Add show/hide for mini-preview below selects
 //7)Gracefully handle arrays that show up in XML (see notices on Blendtec load);
 //8)UI for adding datafeed fields.
 //9)Ability to skip a certain number of rows
+//10)Fix spacing in preview table - output blank if record is missing column.
 
 //pull in XML file - this where we do it if including from local file.
 ////include 'sample_xml.php';
@@ -45,9 +46,32 @@ $ns_atom = $items->channel->item;
 $xmlKeys = get_object_vars($ns_atom);
 
 //google namespace
-$ns_google = $items->channel->item->children('http://base.google.com/ns/1.0');
-$gKeys = get_object_vars($ns_google);
+//Here we're checking to see which "item" has the most children,
+//then using that to build our preview table header row.
 
+//set some global variables
+$index = 0;
+$highest_index = 0;
+$highest_count = 0;
+
+//loop through the array
+foreach ($items->channel->item as $item) {
+//handle both namespaces
+  $g_count = $item->children('http://base.google.com/ns/1.0')->count();
+  $n_count = $item->children()->count();
+  $count = $g_count; + $n_count;
+
+//set globals
+  if($count > $highest_count){
+    $highest_count = $count;
+    $highest_index = $index;
+  }
+//iterate counter
+  $index++;
+}
+
+$ns_google = $items->channel->item[$highest_index]->children('http://base.google.com/ns/1.0');
+$gKeys = get_object_vars($ns_google);
 
 //add google namespace keys to array
 foreach($gKeys as $key => $value){
@@ -83,7 +107,6 @@ echo "<form id='buildString' method='post'>";
 //iterate through array of xml keys
   foreach ($xmlKeys as $key => $value) {
     //filter out arrays - may need a better solution eventually
-    if(gettype($value) != "array"){
 
     echo "<label>".$key."</label> >  ";
 
@@ -101,10 +124,20 @@ echo "<form id='buildString' method='post'>";
     echo "<input type='checkbox' class='miniPreview' id='showPreview-".$key."'/>";
 
     //output some of that data in a preview div for quick reference
-    echo "<div style=' display:none; border: 1px solid black; margin-top: 5px; max-width: 50%;' id='preview-".$key."'><h5>Data Preview</h5>$value</div>";
+
+    if(gettype($value) != "array"){
+      echo "<div style=' display:none; border: 1px solid black; margin-top: 5px; max-width: 50%;' id='preview-".$key."'><h5>Data Preview</h5>$value</div>";
+    }else{
+      $previewString = "";
+      foreach($value as $aKey => $aVal){
+        $previewString .= $aVal.", ";
+      }
+      echo "<div style=' display:none; border: 1px solid black; margin-top: 5px; max-width: 50%;' id='preview-".$key."'><h5>Data Preview</h5>$previewString</div>";
+
+    } //array check
 
     echo "<br><br>";
-  } //array check
+
   };
 
 ?>
@@ -124,8 +157,9 @@ echo "<form id='buildString' method='post'>";
 <?php
 
   echo "<thead>";
+  echo "<th></th>";
 
-  foreach ($previewData[0] as $key => $value) {
+  foreach ($xmlKeys as $key => $value) {
     echo "<th>";
     echo $key;
     echo "</th>";
@@ -136,26 +170,44 @@ echo "<form id='buildString' method='post'>";
 
   echo "<tbody>";
 
+  $rowCount = 0;
+
   foreach ($previewData as $data) {
 
-      echo "<tr>";
-
-    foreach($data as $column => $value){
-      //filter out arrays -  we can handle these here by just looping again
-      //...kicker is the parsing up top.
-      echo "<td>";
-      if(gettype($value) != "array"){
-      echo $value;
-    }else{
-      echo "Array (Invalid Data Type)";
-    }
+      echo "<tr id='pRow-".$rowCount."'>";
+      echo "<td><input type='checkbox' id='hideRow-".$rowCount."''>";
+      echo "<label>Hide Row</label>";
       echo "</td>";
 
-    }
+      foreach($xmlKeys as $xmlK => $xmlV){
+
+      echo "<td>";
+      //handle empty nodes - insert placeholder for table alignment.
+      if(!array_key_exists($xmlK, $data)){
+        echo "no data";
+      }else{
+      //handle arrays -  we can handle these here by just looping again
+      if(gettype($data[$xmlK]) != "array"){
+      echo $data[$xmlK];
+      }else{
+      $previewString = "";
+      foreach ($data[$xmlK] as $aKey => $aVal) {
+        $previewString .= $aVal.", ";
+      }
+      echo $previewString;
+      }///arrayCheck else
+
+    } //column data check
+        echo "</td>";
+
+  } //xmlKeys iterator
+
+
+  //  }
 
     echo "</tr>";
-
-    }
+    $rowCount++;
+  }
 
   echo "</tbody>";
 
