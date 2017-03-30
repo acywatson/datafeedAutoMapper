@@ -6,7 +6,7 @@
 <h1>Datafeed AutoMapper</h1>
 <form id="submitXmlUrlForm" method="POST" action="parser.php">
 
-<input type='text' id='xmlUrl' name='xmlUrl'/>
+<input type='text' id='xmlUrl' name='xmlUrl' placeholder='Enter Feed URL'/>
 
 <button type="submit" id="submitXmlUrl">Fetch</button>
 </form>

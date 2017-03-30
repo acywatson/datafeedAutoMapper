@@ -1,15 +1,18 @@
 <?php
 //TO DO
-//1) Handle variants - need to ask allie about this
+//1) Add option to map secondary file (variants)
 //DONE 2) Add more preview data (3-5 items worth - table?)
 //DONE 3) Create way to pull xml in from merchant URL
 //4) (REACH) add fuzzy search that tries to auto-select the correct value :-)
 //DONE 5) Pull out JS into separate file and include.
 //DONE 6)Add show/hide for mini-preview below selects
-//7)Gracefully handle arrays that show up in XML (see notices on Blendtec load);
+//DONE (Sort of) 7)Gracefully handle arrays that show up in XML (see notices on Blendtec load);
 //8)UI for adding datafeed fields.
-//9)Ability to skip a certain number of rows
-//10)Fix spacing in preview table - output blank if record is missing column.
+//DONE 9)Ability to skip a certain number of rows
+//DONE 10)Fix spacing in preview table - output blank if record is missing column.
+//11) Add view that compares common XSLTs and XML side-by-side
+//12) XML Lint integration
+//13) Integrate manual php XSLT tester file
 
 //pull in XML file - this where we do it if including from local file.
 ////include 'sample_xml.php';
@@ -101,8 +104,6 @@ foreach($items->channel->item as $item){
 
 /* End Build Preview Data */
 
-echo "<h1>Datafeed AutoMapper</h1>";
-
 echo "<form id='buildString' method='post'>";
 //iterate through array of xml keys
   foreach ($xmlKeys as $key => $value) {
@@ -144,7 +145,7 @@ echo "<form id='buildString' method='post'>";
 
 </form> <!-- buildString form -->
 
-<button id="submitBuildString">PRINT</button>
+<button id="submitBuildString">PRINT MAP</button>
 
 <textarea rows=10 cols=50 id="output"></textarea>
 
@@ -152,7 +153,9 @@ echo "<form id='buildString' method='post'>";
 
 <h3>Data Preview</h3>
 
-<table id="previewData" border = "1" style="margin-top: 20px; border:1px solid black;">
+<button id ="showAllRows">Show All Rows</button>
+
+<table id="previewData" border = "1" style="margin-top: 20px; border:1px solid black; width: 100%; overflow-x: scroll; overflow-y: scroll;">
 
 <?php
 
