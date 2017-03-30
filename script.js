@@ -88,12 +88,27 @@ for(var i = 0, element; element = elements[i++];){
     if (this.checked == true){
 
       el.style.display = 'none';
+      el.className = 'hidden-row';
+      this.checked = false;
 
     }else{
 
       el.style.display = 'table-row';
 
     }
+
+  }
+
+  function showAllRows(){
+
+    var hiddenRows = document.getElementsByClassName('hidden-row');
+
+    for(var i = 0, element; element = hiddenRows[i++];){
+      element.className = '';
+      element.style.display = 'table-row';
+
+    }
+
 
   }
 
@@ -108,3 +123,5 @@ for(var i = 0, element; element = elements[i++];){
 
     }
 }
+
+document.getElementById("showAllRows").addEventListener('click', showAllRows);
